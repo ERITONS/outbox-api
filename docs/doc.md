@@ -14,6 +14,19 @@
 
 - User 
 
+# git flow 
+
+    # criar feature
+    git checkout -b feat/export-csv
+    # commits no padrão
+    git commit -m "feat: exporta relatórios em CSV"
+    git push -u origin feat/export-csv
+
+    # abrir PR → Squash & Merge na main
+    # o action cria PR de release
+    # após revisar:
+    # merge da PR de release → cria tag e Release com notas
+
 # Todo 
 
 1 - Configurar Swegger  
