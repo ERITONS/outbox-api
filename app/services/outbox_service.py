@@ -1,6 +1,6 @@
-from models.outbox import Outbox
-from repositories.outbox_repository import OuboxRepository
-from schemas.outbox import OutboxCreate
+from app.models.outbox import Outbox
+from app.repositories.outbox_repository import OuboxRepository
+from app.schemas.outbox import OutboxCreate
 
 
 class OutboxService:

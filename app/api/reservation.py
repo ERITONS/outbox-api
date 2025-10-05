@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from db.database import SessionLocal
-from schemas.reservation import ReservationCreate
-from repositories import(
+from app.db.database import SessionLocal
+from app.schemas.reservation import ReservationCreate
+from app.repositories import(
     reservation_repository as rr,
     product_repository as pr,
     inventory_repository as ir,
     outbox_repository as orp
 )
-from services.reservation_service import ReservationService
-from db.dependencies import get_db
+from app.services.reservation_service import ReservationService
+from app.db.dependencies import get_db
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 

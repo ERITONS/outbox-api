@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
 
-from repositories.inventory_repository import InventoryRepository
-from repositories.outbox_repository import OuboxRepository
-from repositories.product_repository import ProductRespository
-from repositories.reservation_repository import ReservationRepository
+from app.repositories.inventory_repository import InventoryRepository
+from app.repositories.outbox_repository import OuboxRepository
+from app.repositories.product_repository import ProductRespository
+from app.repositories.reservation_repository import ReservationRepository
 from sqlalchemy.orm import Session
 
 
