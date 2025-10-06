@@ -1,4 +1,4 @@
-from models.reservation import Reservation
+from app.models.reservation import Reservation
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 

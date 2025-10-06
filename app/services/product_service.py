@@ -1,6 +1,6 @@
-from repositories.product_repository import ProductRespository
-from schemas.product import ProductCreate
-from models.product import Product
+from app.repositories.product_repository import ProductRespository
+from app.schemas.product import ProductCreate
+from app.models.product import Product
 
 class ProductService:
     def __init__(self, product_repo: ProductRespository):

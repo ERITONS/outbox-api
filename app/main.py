@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from api.reservation import router as reservation_router
+from app.api.reservation import router as reservation_router
 
 app = FastAPI()
 

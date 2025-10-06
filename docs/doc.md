@@ -29,13 +29,21 @@
 
 # Todo 
 
-1 - Configurar Swegger  
+1 - Configurar Swagger  
 2 - Analisar possibilidade de usar Poetry 
 3 - Implementar pre-commit 
 4 - Implementar Black
 5 - Implementar Lint 
 6 - Implemtar testes de performance
 7 - Criar repo no github 
+
+# how to play 
+
+docker-compose up --build -d
+
+Criação de nova versão do banco com alembic 
+
+
 
 
 

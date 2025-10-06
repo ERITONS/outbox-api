@@ -1,0 +1,10 @@
+fastapi==0.111.0
+uvicorn[standard]==0.37.0
+sqlalchemy==2.0.43
+sqlalchemy.orm==1.2.10
+pydantic==2.11.10
+alembic==1.13.2
+psycopg2-binary==2.9.10
+python-dotenv==1.1.1
+pydantic-settings==2.11.0
+psycopg[binary]==3.2.1

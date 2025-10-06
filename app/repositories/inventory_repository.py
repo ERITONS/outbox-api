@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from models.inventory import Inventory
-from schemas.inventory import InventoryCreate, InventoryUpdate
+from app.models.inventory import Inventory
+from app.schemas.inventory import InventoryCreate, InventoryUpdate
 
 class InventoryRepository:
     def __init__(self, db:Session):
