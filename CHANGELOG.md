@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/ERITONS/outbox-api/compare/v1.0.0...v1.1.0) (2025-10-06)
+
+
+### Features
+
+* **api:** adicionar estrutura inicial da API e configuração do banco de dados ([f17bf42](https://github.com/ERITONS/outbox-api/commit/f17bf42f2b2122bf4b4aceb866c696bac6d13f58))
+* **api:** adicionar estrutura inicial da API e configuração do banco… ([1cfd404](https://github.com/ERITONS/outbox-api/commit/1cfd404e847ccf31e0eff94bf2cdba2cdcf0cb76))
+
 ## 1.0.0 (2025-09-08)
 
 
