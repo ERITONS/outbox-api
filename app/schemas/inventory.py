@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class InventoryCreate(BaseModel):
+    product_id: int
     total: int
     reserved: int
     available: int

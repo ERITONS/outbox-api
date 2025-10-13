@@ -7,7 +7,6 @@ class InventoryRepository:
     def __init__(self, db:Session):
         self.db = db
 
-    
     def get_product_by_id(self, product_id: int) -> Inventory | None:
          return self.db.query(Inventory).filter(Inventory.product_id == product_id).first()
 
@@ -28,5 +27,12 @@ class InventoryRepository:
             WHERE product_id = :pid
         """), {"pid" : product_id, "qty": qty})
         return res.rowcount == 1    
+    
+    def create(self, inventory_data: InventoryCreate) -> Inventory:
+        inventory = Inventory(**inventory_data.model_dump())
+        self.db.add(inventory)
+        self.db.commit()
+        self.db.refresh(inventory)
+        return inventory
 
 

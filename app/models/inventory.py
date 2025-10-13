@@ -5,6 +5,7 @@ from sqlalchemy.orm import mapped_column
 
 class Inventory(Base):
     __tablename__= "inventory"
+    
 
     product_id = mapped_column(ForeignKey("flashsale.product.id",ondelete="CASCADE"), primary_key=True)
     total = Column(Integer, nullable=False)
