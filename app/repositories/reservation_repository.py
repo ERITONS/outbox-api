@@ -1,3 +1,4 @@
+import logging
 from app.models.reservation import Reservation
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -13,9 +14,10 @@ class ReservationRepository:
         row = self.db.execute(text("""
             INSERT INTO flashsale.reservation(sku, qty, user_id, status, expires_at)
             VALUES (:sku, :qty, :uid, :st, :exp)
-            RETURNING ID
+            RETURNING ID, CREATE_AT
         """), {"sku": sku, "qty": qty, "uid": user_id, "st": status, "exp": expires_at}).first()
-        r = Reservation(id=row.id, sku = sku, qty=qty, user_id=user_id, status=status, expires_at=expires_at)
+        r = Reservation(id=row.id, sku=sku, qty=qty, user_id=user_id, status=status, create_at=row.create_at, expires_at=expires_at)
+        logging.info(f"Created reservation: {row}")
         return r
 
     

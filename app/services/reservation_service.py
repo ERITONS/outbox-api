@@ -61,7 +61,8 @@ class ReservationService:
                         "qty": reservation_data.qty,
                         "user_id": user_id,
                         "expires_at": expires_at.isoformat(),
-                    }
+                    },
+                    created_at=reservation.create_at
                 )
          
             return {"reservation_id": reservation.id, "status": "pending", "expires_at": expires_at}
