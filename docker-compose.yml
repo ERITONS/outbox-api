@@ -27,3 +27,46 @@ services:
     image: redis:7
     ports:
       - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: pass
+    ports:
+      - "5672:5672"    
+      - "15672:15672"   
+
+  outbox_worker:
+    build: .
+    command: python -m workers.outbox_worker
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - db
+      - rabbitmq
+    volumes:
+      - .:/app
+
+  confirmation_worker:
+    build: .
+    command: python -m workers.confirmation_worker
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - db
+      - rabbitmq
+    volumes:
+      - .:/app
+
+  expiration_worker:
+    build: .
+    command: python -m workers.expiration_worker
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    volumes:
+      - .:/app
