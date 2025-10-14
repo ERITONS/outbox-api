@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
 from app.schemas.inventory import InventoryCreate
 from app.repositories import(
     inventory_repository as ir,

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.models.inventory import Inventory
-from app.schemas.inventory import InventoryCreate, InventoryUpdate
+from app.schemas.inventory import InventoryCreate
 
 class InventoryRepository:
     def __init__(self, db:Session):
@@ -12,16 +12,16 @@ class InventoryRepository:
 
     def reserve_atomic(self, product_id: int, qty: int) -> None:
         res = self.db.execute(text("""
-            UPDATE inventory
+            UPDATE flashsale.inventory
             SET reserved = reserved + :qty,
                 available = available - :qty
-            WHERE product_id = :pid and available >= : qty
+            WHERE product_id = :pid and available >= :qty
         """), {"pid" : product_id, "qty": qty})
         return res.rowcount == 1
     
     def release_atomic(self, product_id: int, qty: int) -> None:
         res = self.db.execute(text("""
-            UPDATE inventory
+            UPDATE flashsale.inventory
             SET reserved = reserved - :qty,
                 available = available + :qty
             WHERE product_id = :pid

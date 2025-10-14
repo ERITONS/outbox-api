@@ -8,7 +8,6 @@ class ReservationCreate(BaseModel):
     user_id: int
     status: str
     expires_at: datetime
-    create_at: datetime
 
 class ReservationRead(BaseModel):
     id: int
