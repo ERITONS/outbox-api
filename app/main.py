@@ -3,12 +3,14 @@ from fastapi import FastAPI
 from app.api.reservation import router as reservation_router
 from app.api.product import router as product_router
 from app.api.inventory import router as inventory_router
+from app.api.payments import router as payments_router  
 
 app = FastAPI()
 
 app.include_router(reservation_router)
 app.include_router(product_router)
 app.include_router(inventory_router)
+app.include_router(payments_router)
 
 
 @app.get("/health")
