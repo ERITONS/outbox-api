@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
 from app.schemas.reservation import ReservationCreate
 from app.repositories import(
-    reservation_repository as rr,
     product_repository as pr,
+    reservation_repository as rr,
     inventory_repository as ir,
     outbox_repository as orp
 )

@@ -7,7 +7,7 @@ class ProductService:
         self.product_repo = product_repo
 
     def register_product(self, product_data: ProductCreate) -> Product:
-        existing_product = self.product_repo.get_by_id(product_data.id)
+        existing_product = self.product_repo.get_by_sku(product_data.sku)
         if existing_product:
             raise ValueError("Sku already registered")
         return self.product_repo.create(product_data)

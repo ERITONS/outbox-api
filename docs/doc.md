@@ -43,7 +43,17 @@ docker-compose up --build -d
 
 Criação de nova versão do banco com alembic 
 
+docker compose exec api alembic revision --autogenerate -m "create outbox table"
 
+Criar as tabelas:
 
+docker compose exec api alembic upgrade head
 
+# How tp update api 
 
+docker compose build api
+docker compose up -d api
+
+# endpoint swagger
+
+# gerador de sku
