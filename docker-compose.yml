@@ -2,13 +2,13 @@ services:
   api:
     build: 
       context: .
-      dockerfile: infra/Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app
+      - .:/app
     depends_on:
       - db
       - redis
@@ -38,7 +38,9 @@ services:
       - "15672:15672"   
 
   outbox_worker:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     command: python -m workers.outbox_worker
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -50,7 +52,9 @@ services:
       - .:/app
 
   confirmation_worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: python -m workers.confirmation_worker
     environment:
       - DATABASE_URL=${DATABASE_URL}
@@ -62,7 +66,9 @@ services:
       - .:/app
 
   expiration_worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: python -m workers.expiration_worker
     environment:
       - DATABASE_URL=${DATABASE_URL}
