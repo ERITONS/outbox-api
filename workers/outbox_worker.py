@@ -1,7 +1,7 @@
 import json, time, pika
 from sqlalchemy import text
-from db.database import SessionLocal
-from core.config import settings
+from app.db.database import SessionLocal
+from app.core.config import settings
 
 def get_channel():
     params = pika.URLParameters(settings.RABBITMQ_URL)

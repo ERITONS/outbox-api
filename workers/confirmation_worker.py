@@ -1,7 +1,7 @@
 import json, pika
 from sqlalchemy import text
-from db.database import SessionLocal
-from core.config import settings
+from app.db.database import SessionLocal
+from app.core.config import settings
 
 def handle_confirm(msg: dict):
     rid = msg["reservation_id"]

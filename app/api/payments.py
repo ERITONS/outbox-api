@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import json, pika
-from core.config import settings
+from app.core.config import settings
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 

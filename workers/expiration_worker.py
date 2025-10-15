@@ -1,6 +1,6 @@
 import json, time
 from sqlalchemy import text
-from db.database import SessionLocal
+from app.db.database import SessionLocal
 
 BATCH = 200
 SLEEP = 2  # segundos
