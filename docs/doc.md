@@ -29,7 +29,7 @@
 
 # Todo 
 
-1 - Configurar Swegger  
+1 - Configurar Swagger  
 2 - Analisar possibilidade de usar Poetry 
 3 - Implementar pre-commit 
 4 - Implementar Black
@@ -37,5 +37,23 @@
 6 - Implemtar testes de performance
 7 - Criar repo no github 
 
+# how to play 
 
+docker-compose up --build -d
 
+Criação de nova versão do banco com alembic 
+
+docker compose exec api alembic revision --autogenerate -m "create outbox table"
+
+Criar as tabelas:
+
+docker compose exec api alembic upgrade head
+
+# How tp update api 
+
+docker compose build api
+docker compose up -d api
+
+# endpoint swagger
+
+# gerador de sku

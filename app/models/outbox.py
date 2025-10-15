@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, JSON, DateTime
-from db.database import Base
+from app.db.database import Base
 
 class Outbox(Base):
     __tablename__= "outbox"
-
+    
     id = Column(Integer, primary_key=True, index=True)
     aggregate_type = Column(String,nullable=False)
     aggregate_id = Column(String,nullable=False)

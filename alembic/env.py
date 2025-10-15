@@ -7,6 +7,12 @@ from alembic import context
 
 from app.core.config import settings
 from app.db.database import Base
+from app.models import outbox 
+from app.models import inventory 
+from app.models import orders 
+from app.models import product 
+from app.models import payment 
+from app.models import reservation 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -47,6 +53,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        version_table_schema="flashsale",    
         dialect_opts={"paramstyle": "named"},
     )
 
