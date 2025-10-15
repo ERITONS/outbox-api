@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ERITONS/outbox-api/compare/v1.1.0...v1.2.0) (2025-10-15)
+
+
+### Features
+
+* **docker:** criar Dockerfile para configuração do ambiente ([120c186](https://github.com/ERITONS/outbox-api/commit/120c18625be8edc6f42dcd74217c7f7f0133ce4d))
+
 ## [1.1.0](https://github.com/ERITONS/outbox-api/compare/v1.0.0...v1.1.0) (2025-10-06)
 
 
