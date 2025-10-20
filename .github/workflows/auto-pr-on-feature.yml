@@ -1,0 +1,104 @@
+name: Auto PR to develop on feature commits
+
+on:
+  push:
+    branches-ignore:
+      - develop
+      - master
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr-to-develop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (shallow)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detecta commits feat/feature neste push
+        id: check_msgs
+        run: |
+          git log --format=%s ${{ github.event.before }}..${{ github.sha }} > /tmp/msgs.txt || true
+          if grep -Eiq '^(feat|feature)(\(|:| )' /tmp/msgs.txt; then
+            echo "should_create=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_create=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Cria PR -> develop (se necessário)
+        if: steps.check_msgs.outputs.should_create == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const headBranch = context.ref.replace('refs/heads/', '');
+            const baseBranch = 'develop';
+
+            // Evita se a origem for develop/main/master
+            if (['develop','master','main'].includes(headBranch)) {
+              core.info('Nada a fazer para develop/main/master.');
+              return;
+            }
+
+            // Verifica PR aberto head->develop
+            const existing = await github.rest.pulls.list({
+              owner, repo, state: 'open', head: `${owner}:${headBranch}`, base: baseBranch
+            });
+            if (existing.data.length > 0) {
+              core.info(`Já existe PR de ${headBranch} -> ${baseBranch}.`);
+              return;
+            }
+
+            // Carrega template se existir
+            async function getTemplateOrDefault() {
+              try {
+                const res = await github.rest.repos.getContent({
+                  owner, repo, path: '.github/pull_request_template.md',
+                  ref: headBranch
+                });
+                const buf = Buffer.from(res.data.content, res.data.encoding || 'base64').toString('utf8');
+                return buf;
+              } catch (e) {
+                return [
+                  '## Descrição',
+                  '',
+                  'Explique o que este PR faz.',
+                  '',
+                  '## Tipo de mudança',
+                  '- [ ] Feature',
+                  '- [ ] Fix',
+                  '- [ ] Chore/Refactor',
+                  '',
+                  '## Como testar',
+                  'Passos e evidências.',
+                  '',
+                  '## Checklist',
+                  '- [ ] Testes locais ok',
+                  '- [ ] Sem mudanças de schema ou documentadas',
+                  '- [ ] Atualizei docs quando necessário'
+                ].join('\n');
+              }
+            }
+
+            const templateBody = await getTemplateOrDefault();
+
+            // Título padrão baseado na branch
+            const normalized = headBranch.replace(/^feature\//,'');
+            const title = `feat: merge ${normalized} into ${baseBranch}`;
+
+            const pr = await github.rest.pulls.create({
+              owner, repo,
+              head: headBranch,
+              base: baseBranch,
+              title,
+              body: templateBody,
+              draft: false
+            });
+
+            core.info(`PR criado: #${pr.data.number}`);
