@@ -1,0 +1,72 @@
+name: Auto PR develop -> master when merged
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr-to-master:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cria PR develop -> master (apenas cria, sem merge)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const headBranch = 'develop';
+            const baseBranch = 'master'; // troque para 'main' se for o seu padrão
+
+            // Verifica se já existe PR aberto de develop->master
+            const existing = await github.rest.pulls.list({
+              owner, repo, state: 'open', head: `${owner}:${headBranch}`, base: baseBranch
+            });
+            if (existing.data.length > 0) {
+              core.info(`Já existe PR aberto de ${headBranch} -> ${baseBranch}.`);
+              return;
+            }
+
+            async function getTemplateOrDefault() {
+              try {
+                const res = await github.rest.repos.getContent({
+                  owner, repo, path: '.github/pull_request_template.md',
+                  ref: headBranch
+                });
+                const buf = Buffer.from(res.data.content, res.data.encoding || 'base64').toString('utf8');
+                return buf;
+              } catch (e) {
+                return [
+                  '# Release: develop → master',
+                  '',
+                  '## Resumo',
+                  '- Principais mudanças incluídas nesta release.',
+                  '',
+                  '## Riscos / Rollback',
+                  '- Riscos conhecidos e plano de rollback.',
+                  '',
+                  '## Checagens',
+                  '- [ ] Pipeline verde',
+                  '- [ ] Migrações revisadas',
+                  '- [ ] Observabilidade/feature flags ok'
+                ].join('\n');
+              }
+            }
+
+            const body = await getTemplateOrDefault();
+
+            const pr = await github.rest.pulls.create({
+              owner, repo,
+              head: headBranch,
+              base: baseBranch,
+              title: 'Release: develop → master',
+              body,
+              draft: false
+            });
+
+            core.info(`PR criado: #${pr.data.number}`);

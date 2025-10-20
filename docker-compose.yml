@@ -38,7 +38,7 @@ services:
       - "15672:15672"   
 
   outbox_worker:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     command: python -m workers.outbox_worker
@@ -66,7 +66,7 @@ services:
       - .:/app
 
   expiration_worker:
-    build:
+    build: 
       context: .
       dockerfile: Dockerfile
     command: python -m workers.expiration_worker
