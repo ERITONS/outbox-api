@@ -24,7 +24,7 @@ def run():
         with SessionLocal() as db:
             rows = db.execute(text("""
                 SELECT id, event_type, payload_json
-                FROM outbox_event
+                FROM flashsale.outbox
                 WHERE status='pending'
                 ORDER BY id
                 FOR UPDATE SKIP LOCKED
@@ -44,7 +44,7 @@ def run():
                     }.get(r.event_type, "unknown")
 
                     publish_event(ch, rk, r.payload_json)
-                    db.execute(text("UPDATE outbox_event SET status='published', published_at=NOW() WHERE id=:id"), {"id": r.id})
+                    db.execute(text("UPDATE flashsale.outbox SET status='published', published_at=NOW() WHERE id=:id"), {"id": r.id})
                 db.commit()
             except Exception:
                 db.rollback()

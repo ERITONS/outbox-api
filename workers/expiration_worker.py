@@ -9,8 +9,9 @@ def run():
     while True:
         with SessionLocal() as db:
             rows = db.execute(text("""
-                SELECT id, product_id, qty
-                FROM reservation
+                SELECT reservation.id, reservation.sku, reservation.qty, p.id AS product_id
+                FROM flashsale.reservation
+                INNER JOIN flashsale.product p on p.sku=reservation.sku                   
                 WHERE status='pending' AND expires_at < NOW()
                 ORDER BY id
                 LIMIT :n
@@ -24,7 +25,7 @@ def run():
                     with db.begin():
                         # marca como expirado (idempotente)
                         updated = db.execute(text("""
-                            UPDATE reservation
+                            UPDATE flashsale.reservation
                             SET status='expired'
                             WHERE id=:rid AND status='pending'
                         """), {"rid": r.id}).rowcount
