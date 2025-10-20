@@ -1,18 +1,23 @@
-import json, time
-from sqlalchemy import text
+from datetime import datetime, timezone
+import json, time, logging
+from sqlalchemy import text, bindparam
 from app.db.database import SessionLocal
+from sqlalchemy.dialects.postgresql import JSONB
+
 
 BATCH = 200
 SLEEP = 2  # segundos
 
 def run():
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [expiration] %(levelname)s: %(message)s")
+    logging.info("starting expiration worker...")
     while True:
         with SessionLocal() as db:
             rows = db.execute(text("""
                 SELECT reservation.id, reservation.sku, reservation.qty, p.id AS product_id
                 FROM flashsale.reservation
                 INNER JOIN flashsale.product p on p.sku=reservation.sku                   
-                WHERE status='pending' AND expires_at < NOW()
+                WHERE reservation.status='pending' AND reservation.expires_at < NOW()
                 ORDER BY id
                 LIMIT :n
             """), {"n": BATCH}).fetchall()
@@ -22,7 +27,8 @@ def run():
 
             for r in rows:
                 try:
-                    with db.begin():
+                    logging.info(f"expiring reservation id={r.id} (sku={r.sku})")
+                    with SessionLocal.begin() as db:
                         # marca como expirado (idempotente)
                         updated = db.execute(text("""
                             UPDATE flashsale.reservation
@@ -34,20 +40,41 @@ def run():
 
                         # devolve estoque
                         db.execute(text("""
-                            UPDATE inventory
+                            UPDATE flashsale.inventory
                             SET reserved  = GREATEST(reserved - :qty, 0),
                                 available = available + :qty
                             WHERE product_id = :pid
                         """), {"qty": r.qty, "pid": r.product_id})
 
                         # outbox event
-                        db.execute(text("""
-                            INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload_json, status)
-                            VALUES ('reservation', :rid, 'ReservationExpired',
-                                    :payload::jsonb, 'pending')
-                        """), {"rid": r.id, "payload": json.dumps({"reservation_id": r.id})})
-                except Exception:
-                    pass
+                        stmt = text("""
+                            INSERT INTO flashsale.outbox 
+                                (aggregate_type, aggregate_id, event_type, payload_json, status,created_at, published_at)
+                            VALUES 
+                                (:t, :id, :et, :p, :s,:ca, :pa)
+                        """).bindparams(
+                            bindparam("t"),
+                            bindparam("id"),
+                            bindparam("et"),
+                            bindparam("p", type_=JSONB),
+                            bindparam("s"),
+                            bindparam("ca"),
+                            bindparam("pa"),
+                        )
+
+                        db.execute(stmt, {
+                            "t": "reservation",
+                            "id": r.id,
+                            "et": "ReservationExpired",
+                            "p": json.dumps({"reservation_id": r.id}),
+                            "s": "pending",
+                            "ca": datetime.now(timezone.utc), 
+                            "pa": datetime.now(timezone.utc),
+
+                        })
+
+                except Exception as e:
+                    logging.error(f"error expiring reservation id={r.id}: {e}")
         # pequeno respiro
         time.sleep(SLEEP)
 
