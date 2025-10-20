@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/ERITONS/outbox-api/compare/v1.2.0...v1.3.0) (2025-10-20)
+
+
+### Features
+
+* merge feat/configurar-alembic into develop ([0d63ba1](https://github.com/ERITONS/outbox-api/commit/0d63ba1f4a6ecf24621ddbb348496380a7259b24))
+
 ## [1.2.0](https://github.com/ERITONS/outbox-api/compare/v1.1.0...v1.2.0) (2025-10-15)
 
 
